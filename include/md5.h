@@ -13,6 +13,8 @@
 #ifndef MD5_H
 # define MD5_H
 
+#include <stdint.h>
+
 #define MD5_DIGEST_SIZE 16
 #define MD5_HEX_DIGEST_SIZE 33
 
