@@ -1,0 +1,27 @@
+name: main
+
+on:
+  push:
+    branches: [ "main", "libftssl" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  tests:
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev clang-format valgrind
+
+      - name: Check format
+        run: make check-format
+
+      - name: Build
+        run: make
+
+      - name: Run tests
+        run: make tests
