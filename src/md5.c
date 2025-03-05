@@ -17,11 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MD5_BLOCK_SIZE_IN_BYTES 64
-#define MD5_BLOCK_SIZE_IN_UINT32 16
-#define MD5_BLOCK_PADDING_META_DATA_SIZE 9
-
-typedef uint32_t md5_block[MD5_BLOCK_SIZE_IN_UINT32];
+#include "padding.h"
 
 typedef struct {
   uint32_t a;
@@ -57,39 +53,36 @@ const uint32_t K[64] = {
     0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391};  // 60..63
 
 static inline void init_context(md5_context *context);
-static uint8_t *compute_block(md5_block block, md5_digest digest,
+static uint8_t *compute_block(block_512 block, md5_digest digest,
                               md5_context *context);
 static inline uint32_t leftrotate(uint32_t x, uint32_t offset);
 static inline uint32_t F(uint32_t x, uint32_t y, uint32_t z);
 static inline uint32_t G(uint32_t x, uint32_t y, uint32_t z);
 static inline uint32_t H(uint32_t x, uint32_t y, uint32_t z);
 static inline uint32_t I(uint32_t x, uint32_t y, uint32_t z);
-static uint8_t padding_block(const char *message, md5_block block,
-                             uint64_t bytes_len);
-static void padding_last_block(uint64_t bytes_len, md5_block block);
 
 /**
  * Compute the md5 hash of a message and store it in the digest
  */
 void md5_hash(const char *message, md5_digest digest) {
   md5_context context;
-  md5_block block;
+  block_512 block;
   uint64_t size = strlen(message);
   uint64_t i = 0;
 
   init_context(&context);
 
   // Process the message by blocks of 64 bytes
-  while (size - i >= MD5_BLOCK_SIZE_IN_BYTES) {
-    memcpy(block, message + i, MD5_BLOCK_SIZE_IN_BYTES);
+  while (size - i >= BLOCK_512_SIZE_IN_BYTES) {
+    memcpy(block, message + i, BLOCK_512_SIZE_IN_BYTES);
     compute_block(block, digest, &context);
-    i += MD5_BLOCK_SIZE_IN_BYTES;
+    i += BLOCK_512_SIZE_IN_BYTES;
   }
-  uint32_t result = padding_block(message + i, block, size * 8);
+  uint8_t result = padding_block_512(message + i, size * 8, block);
   compute_block(block, digest, &context);
   // If the message is longer than 55 bytes, we need to add a last block
   if (result > 0) {
-    padding_last_block(size * 8, block);
+    padding_last_block_512(size * 8, block);
     compute_block(block, digest, &context);
   }
 }
@@ -117,7 +110,7 @@ static inline void init_context(md5_context *context) {
 /**
  * Compute the md5 hash of a block using context and store it in the digest
  */
-static uint8_t *compute_block(md5_block block, md5_digest digest,
+static uint8_t *compute_block(block_512 block, md5_digest digest,
                               md5_context *context) {
   uint32_t A = context->a;
   uint32_t B = context->b;
@@ -139,7 +132,7 @@ static uint8_t *compute_block(md5_block block, md5_digest digest,
       f = I(B, C, D);
       g = (7 * i) % 16;
     }
-    f = f + A + K[i] + block[g];
+    f = f + A + K[i] + ((uint32_t *)block)[g];
     A = D;
     D = C;
     C = B;
@@ -177,75 +170,3 @@ static inline uint32_t H(uint32_t x, uint32_t y, uint32_t z) {
 static inline uint32_t I(uint32_t x, uint32_t y, uint32_t z) {
   return y ^ (x | ~z);
 }
-
-/**
- * Add md5 padding to the block with 0x80 and the length of the message in bits
- * @return 1 if a last block with the length of the message is needed, 0
- * otherwise
- */
-static uint8_t padding_block(const char *message, md5_block block,
-                             uint64_t bytes_len) {
-  uint32_t message_len = strlen(message);
-  uint8_t *block_u8 = (uint8_t *)block;
-  memcpy(block, message, message_len);
-  if (message_len <=
-      MD5_BLOCK_SIZE_IN_BYTES - MD5_BLOCK_PADDING_META_DATA_SIZE) {
-    block_u8[message_len] = 0x80;
-    memset(block_u8 + message_len + 1, 0,
-           MD5_BLOCK_SIZE_IN_BYTES - message_len -
-               MD5_BLOCK_PADDING_META_DATA_SIZE);
-    memcpy(block + 14, &bytes_len, sizeof(uint64_t));
-  } else {
-    if (message_len < MD5_BLOCK_SIZE_IN_BYTES) {
-      block_u8[message_len] = 0x80;
-      memset(block_u8 + message_len + 1, 0,
-             MD5_BLOCK_SIZE_IN_BYTES - message_len - 1);
-    }
-    return 1;
-  }
-  return 0;
-}
-
-/**
- * Add md5 padding to the block with length of the message in bits at the end
- */
-static void padding_last_block(uint64_t bytes_len, md5_block block) {
-  uint8_t *block_u8 = (uint8_t *)block;
-  memset(block_u8, 0, 64);
-  memcpy(block + 14, &bytes_len, sizeof(uint64_t));
-}
-
-// Debug functions
-
-/*
-static void print_md5_block(md5_block block);
-static void print_uint32t_to_binary_bytes(uint32_t n);
-static void print_byte_in_binary(uint8_t num);
-
-static void print_md5_block(md5_block block) {
-  for (int i = 0; i < 16; i++) {
-    print_uint32t_to_binary_bytes(block[i]);
-    if (i % 2 == 1) {
-      printf("\n");
-    }
-  }
-  printf("\n");
-}
-
-static void print_uint32t_to_binary_bytes(uint32_t n) {
-  print_byte_in_binary(n & 0xFF);
-  printf(" ");
-  print_byte_in_binary((n >> 8) & 0xFF);
-  printf(" ");
-  print_byte_in_binary((n >> 16) & 0xFF);
-  printf(" ");
-  print_byte_in_binary((n >> 24) & 0xFF);
-  printf(" ");
-}
-
-static void print_byte_in_binary(uint8_t num) {
-  for (int i = 7; i >= 0; i--) {
-    printf("%d", (num >> i) & 1);
-  }
-}
-*/

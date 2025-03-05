@@ -7,7 +7,8 @@ TEST_NAME		=	tests_bin
 # --------------- FILES --------------- #
 
 LIST_SRC		=	\
-					md5.c
+					md5.c	\
+					padding.c
 
 
 LIST_TEST_SRC	=	\
