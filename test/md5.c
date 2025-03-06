@@ -10,7 +10,7 @@
     md5_hex_digest official_digest;              \
     ftssl_md5_digest(input, ftssl_digest);       \
     official_md5_digest(input, official_digest); \
-    ASSERT_STREQ(ftssl_digest, official_digest); \
+    ASSERT_STREQ(official_digest, ftssl_digest); \
   } while (0)
 
 static int8_t md5_official_hash(const char *str, uint8_t result[16]);

@@ -27,14 +27,14 @@ typedef struct {
 } md5_context;
 
 // shift amounts per round
-const uint32_t S[64] = {
+static const uint32_t S[64] = {
     7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,   //    0..15
     5, 9,  14, 20, 5, 9,  14, 20, 5, 9,  14, 20, 5, 9,  14, 20,   //    16..31
     4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,   //    32..47
     6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21};  //   48..63
 
 // K[i] = floor(2^32 × abs(sin(i + 1))) precomputed table
-const uint32_t K[64] = {
+static const uint32_t K[64] = {
     0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,   //  0..3
     0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,   //  4..7
     0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,   //  8..11
@@ -55,14 +55,14 @@ const uint32_t K[64] = {
 static inline void init_context(md5_context *context);
 static uint8_t *compute_block(block_512 block, md5_digest digest,
                               md5_context *context);
-static inline uint32_t leftrotate(uint32_t x, uint32_t offset);
+static inline uint32_t left_rotate(uint32_t x, uint32_t offset);
 static inline uint32_t F(uint32_t x, uint32_t y, uint32_t z);
 static inline uint32_t G(uint32_t x, uint32_t y, uint32_t z);
 static inline uint32_t H(uint32_t x, uint32_t y, uint32_t z);
 static inline uint32_t I(uint32_t x, uint32_t y, uint32_t z);
 
 /**
- * Compute the md5 hash of a message and store it in the digest
+ * Compute the MD5 hash of a message and store it in the digest
  */
 void md5_hash(const char *message, md5_digest digest) {
   md5_context context;
@@ -88,7 +88,7 @@ void md5_hash(const char *message, md5_digest digest) {
 }
 
 /**
- * Convert a md5 digest to a hexadecimal string
+ * Convert a MD5 digest to a hexadecimal string
  */
 void md5_convert_hex_digest(md5_digest digest, md5_hex_digest hex_digest) {
   for (int i = 0; i < MD5_DIGEST_SIZE; i++) {
@@ -98,7 +98,7 @@ void md5_convert_hex_digest(md5_digest digest, md5_hex_digest hex_digest) {
 }
 
 /**
- * Initialize the md5 context with the default values
+ * Initialize the MD5 context with the default values
  */
 static inline void init_context(md5_context *context) {
   context->a = 0x67452301;
@@ -108,7 +108,7 @@ static inline void init_context(md5_context *context) {
 }
 
 /**
- * Compute the md5 hash of a block using context and store it in the digest
+ * Compute the MD5 hash of a block using context and store it in the digest
  */
 static uint8_t *compute_block(block_512 block, md5_digest digest,
                               md5_context *context) {
@@ -136,7 +136,7 @@ static uint8_t *compute_block(block_512 block, md5_digest digest,
     A = D;
     D = C;
     C = B;
-    B = B + leftrotate(f, S[i]);
+    B = B + left_rotate(f, S[i]);
   }
 
   context->a += A;
@@ -144,14 +144,14 @@ static uint8_t *compute_block(block_512 block, md5_digest digest,
   context->c += C;
   context->d += D;
 
-  memcpy(digest, &context->a, sizeof(uint32_t));
-  memcpy(digest + 4, &context->b, sizeof(uint32_t));
-  memcpy(digest + 8, &context->c, sizeof(uint32_t));
-  memcpy(digest + 12, &context->d, sizeof(uint32_t));
+  ((uint32_t *)digest)[0] = context->a;
+  ((uint32_t *)digest)[1] = context->b;
+  ((uint32_t *)digest)[2] = context->c;
+  ((uint32_t *)digest)[3] = context->d;
   return digest;
 }
 
-static inline uint32_t leftrotate(uint32_t x, uint32_t offset) {
+static inline uint32_t left_rotate(uint32_t x, uint32_t offset) {
   return (x << offset) | (x >> (32 - offset));
 }
 

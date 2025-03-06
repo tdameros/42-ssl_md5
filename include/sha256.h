@@ -1,26 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   md5.h                                              :+:      :+:    :+:   */
+/*   sha256.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tdameros <tdameros@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/18 13:35:00 by tdameros          #+#    #+#             */
-/*   Updated: 2025/02/18 13:35:00 by tdameros         ###   ########lyon.fr   */
+/*   Created: 2025/03/05 15:06:00 by tdameros          #+#    #+#             */
+/*   Updated: 2025/03/05 15:06:00 by tdameros         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MD5_H
-# define MD5_H
+#ifndef SHA256_H
+# define SHA256_H
+
+#define SHA256_DIGEST_SIZE 32
+#define SHA256_HEX_DIGEST_SIZE (SHA256_DIGEST_SIZE * 2 + 1)
 
 #include <stdint.h>
 
-#define MD5_DIGEST_SIZE 16
-#define MD5_HEX_DIGEST_SIZE (MD5_DIGEST_SIZE * 2 + 1)
+typedef uint8_t sha256_digest[SHA256_DIGEST_SIZE];
+typedef char sha256_hex_digest[SHA256_HEX_DIGEST_SIZE];
 
-typedef uint8_t md5_digest[MD5_DIGEST_SIZE];
-typedef char md5_hex_digest[MD5_HEX_DIGEST_SIZE];
+void sha256_hash(const char *message, sha256_digest digest);
+void sha256_convert_hex_digest(sha256_digest digest, sha256_hex_digest hex_digest);
 
-void md5_hash(const char *message, md5_digest digest);
-void md5_convert_hex_digest(md5_digest digest, md5_hex_digest hex_digest);
 #endif

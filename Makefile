@@ -7,13 +7,15 @@ TEST_NAME		=	tests_bin
 # --------------- FILES --------------- #
 
 LIST_SRC		=	\
-					md5.c	\
-					padding.c
+					md5.c		\
+					padding.c	\
+					sha256.c
 
 
 LIST_TEST_SRC	=	\
-					main.c	\
-					md5.c
+					main.c		\
+					md5.c		\
+					sha256.c
 
 # ------------ DIRECTORIES ------------ #
 
