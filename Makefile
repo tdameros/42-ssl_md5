@@ -24,7 +24,6 @@ DIR_SRC 		=	src/
 DIR_INCLUDE		=	include/
 DIR_TEST		=	test/
 DIR_LIB			=	lib/
-DIR_UTEST		=	$(DIR_LIB)utest/
 
 # ------------- SHORTCUTS ------------- #
 
@@ -34,7 +33,6 @@ SRC				=	$(addprefix $(DIR_SRC), $(LIST_SRC))
 TEST_SRC		=	$(addprefix $(DIR_TEST), $(LIST_TEST_SRC))
 TEST_DEP		=	$(patsubst %.c, $(DIR_BUILD)%.d, $(TEST_SRC))
 TEST_OBJ		=	$(patsubst %.c, $(DIR_BUILD)%.o, $(TEST_SRC))
-UTEST_INCLUDE	=	$(DIR_UTEST)
 
 # ------------ COMPILATION ------------ #
 
@@ -77,7 +75,7 @@ $(DIR_BUILD)%.o: %.c
 -include $(TEST_DEP)
 $(DIR_BUILD)%.o: %.c
 				mkdir -p $(shell dirname $@)
-				$(CC) $(CFLAGS) $(DEP_FLAGS) -c $< -o $@ -I $(DIR_INCLUDE) -I $(UTEST_INCLUDE) -lcrypto
+				$(CC) $(CFLAGS) $(DEP_FLAGS) -c $< -o $@ -I $(DIR_INCLUDE) -I $(DIR_LIB) -lcrypto
 
 .PHONY: clean
 clean:

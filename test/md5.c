@@ -2,7 +2,7 @@
 
 #include <openssl/evp.h>
 
-#include "utest.h"
+#include "utest/utest.h"
 
 #define ASSERT_MD5_HEX_DIGEST(input)             \
   do {                                           \

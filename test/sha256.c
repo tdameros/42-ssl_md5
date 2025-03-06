@@ -15,7 +15,7 @@
 #include <openssl/evp.h>
 #include <stdio.h>
 
-#include "utest.h"
+#include "utest/utest.h"
 
 #define ASSERT_SHA256_HEX_DIGEST(input)             \
   do {                                              \
