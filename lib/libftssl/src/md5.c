@@ -24,7 +24,7 @@ typedef struct {
   uint32_t b;
   uint32_t c;
   uint32_t d;
-} md5_context;
+} md5_context_t;
 
 // shift amounts per round
 static const uint32_t S[64] = {
@@ -52,9 +52,9 @@ static const uint32_t K[64] = {
     0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,   //  56..59
     0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391};  // 60..63
 
-static inline void init_context(md5_context *context);
-static uint8_t *compute_block(block_512 block, md5_digest digest,
-                              md5_context *context);
+static inline void init_context(md5_context_t *context);
+static uint8_t *compute_block(block_512_t block, md5_digest_t digest,
+                              md5_context_t *context);
 static inline uint32_t left_rotate(uint32_t x, uint32_t offset);
 static inline uint32_t F(uint32_t x, uint32_t y, uint32_t z);
 static inline uint32_t G(uint32_t x, uint32_t y, uint32_t z);
@@ -64,9 +64,9 @@ static inline uint32_t I(uint32_t x, uint32_t y, uint32_t z);
 /**
  * Compute the MD5 hash of a message and store it in the digest
  */
-void md5_hash(const char *message, md5_digest digest) {
-  md5_context context;
-  block_512 block;
+void md5_hash(const char *message, md5_digest_t digest) {
+  md5_context_t context;
+  block_512_t block;
   uint64_t size = strlen(message);
   uint64_t i = 0;
 
@@ -90,7 +90,7 @@ void md5_hash(const char *message, md5_digest digest) {
 /**
  * Convert a MD5 digest to a hexadecimal string
  */
-void md5_convert_hex_digest(md5_digest digest, md5_hex_digest hex_digest) {
+void md5_convert_hex_digest(md5_digest_t digest, md5_hex_digest_t hex_digest) {
   for (int i = 0; i < MD5_DIGEST_SIZE; i++) {
     snprintf(hex_digest + i * 2, 3, "%02x", digest[i]);
   }
@@ -100,7 +100,7 @@ void md5_convert_hex_digest(md5_digest digest, md5_hex_digest hex_digest) {
 /**
  * Initialize the MD5 context with the default values
  */
-static inline void init_context(md5_context *context) {
+static inline void init_context(md5_context_t *context) {
   context->a = 0x67452301;
   context->b = 0xEFCDAB89;
   context->c = 0x98BADCFE;
@@ -110,8 +110,8 @@ static inline void init_context(md5_context *context) {
 /**
  * Compute the MD5 hash of a block using context and store it in the digest
  */
-static uint8_t *compute_block(block_512 block, md5_digest digest,
-                              md5_context *context) {
+static uint8_t *compute_block(block_512_t block, md5_digest_t digest,
+                              md5_context_t *context) {
   uint32_t A = context->a;
   uint32_t B = context->b;
   uint32_t C = context->c;

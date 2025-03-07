@@ -18,9 +18,9 @@
 
 #include <stdint.h>
 
-typedef uint8_t block_512[BLOCK_512_SIZE_IN_BYTES];
+typedef uint8_t block_512_t[BLOCK_512_SIZE_IN_BYTES];
 
-uint8_t padding_block_512(const char *message, uint64_t bytes_len, block_512 block);
-void padding_last_block_512(uint64_t bytes_len, block_512 block);
+uint8_t padding_block_512(const char *message, uint64_t bytes_len, block_512_t block);
+void padding_last_block_512(uint64_t bytes_len, block_512_t block);
 
 #endif

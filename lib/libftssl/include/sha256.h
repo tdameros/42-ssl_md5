@@ -18,10 +18,10 @@
 
 #include <stdint.h>
 
-typedef uint8_t sha256_digest[SHA256_DIGEST_SIZE];
-typedef char sha256_hex_digest[SHA256_HEX_DIGEST_SIZE];
+typedef uint8_t sha256_digest_t[SHA256_DIGEST_SIZE];
+typedef char sha256_hex_digest_t[SHA256_HEX_DIGEST_SIZE];
 
-void sha256_hash(const char *message, sha256_digest digest);
-void sha256_convert_hex_digest(sha256_digest digest, sha256_hex_digest hex_digest);
+void sha256_hash(const char *message, sha256_digest_t digest);
+void sha256_convert_hex_digest(sha256_digest_t digest, sha256_hex_digest_t hex_digest);
 
 #endif

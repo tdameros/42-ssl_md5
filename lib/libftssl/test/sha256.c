@@ -19,8 +19,8 @@
 
 #define ASSERT_SHA256_HEX_DIGEST(input)             \
   do {                                              \
-    sha256_hex_digest ftssl_digest;                 \
-    sha256_hex_digest official_digest;              \
+    sha256_hex_digest_t ftssl_digest;               \
+    sha256_hex_digest_t official_digest;            \
     ftssl_sha256_digest(input, ftssl_digest);       \
     official_sha256_digest(input, official_digest); \
     ASSERT_STREQ(official_digest, ftssl_digest);    \
@@ -29,15 +29,15 @@
 static int8_t sha256_official_hash(const char *str, uint8_t result[32]);
 
 static void ftssl_sha256_digest(const char *input,
-                                sha256_hex_digest hex_digest) {
-  sha256_digest digest;
+                                sha256_hex_digest_t hex_digest) {
+  sha256_digest_t digest;
   memset(digest, 0, 32);
   sha256_hash(input, digest);
   sha256_convert_hex_digest(digest, hex_digest);
 }
 
 static void official_sha256_digest(const char *input,
-                                   sha256_hex_digest hex_digest) {
+                                   sha256_hex_digest_t hex_digest) {
   uint8_t result[32];
   memset(result, 0, 32);
   if (sha256_official_hash(input, result) < 0) {

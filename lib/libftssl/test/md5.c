@@ -6,8 +6,8 @@
 
 #define ASSERT_MD5_HEX_DIGEST(input)             \
   do {                                           \
-    md5_hex_digest ftssl_digest;                 \
-    md5_hex_digest official_digest;              \
+    md5_hex_digest_t ftssl_digest;               \
+    md5_hex_digest_t official_digest;            \
     ftssl_md5_digest(input, ftssl_digest);       \
     official_md5_digest(input, official_digest); \
     ASSERT_STREQ(official_digest, ftssl_digest); \
@@ -15,14 +15,15 @@
 
 static int8_t md5_official_hash(const char *str, uint8_t result[16]);
 
-static void ftssl_md5_digest(const char *input, md5_hex_digest hex_digest) {
-  md5_digest digest;
+static void ftssl_md5_digest(const char *input, md5_hex_digest_t hex_digest) {
+  md5_digest_t digest;
   memset(digest, 0, 16);
   md5_hash(input, digest);
   md5_convert_hex_digest(digest, hex_digest);
 }
 
-static void official_md5_digest(const char *input, md5_hex_digest hex_digest) {
+static void official_md5_digest(const char *input,
+                                md5_hex_digest_t hex_digest) {
   uint8_t result[16];
   memset(result, 0, 16);
   if (md5_official_hash(input, result) < 0) {

@@ -21,7 +21,7 @@
  * otherwise
  */
 uint8_t padding_block_512(const char *message, uint64_t bytes_len,
-                          block_512 block) {
+                          block_512_t block) {
   uint32_t message_len = strlen(message);
   memcpy(block, message, message_len);
   if (message_len <=
@@ -45,7 +45,7 @@ uint8_t padding_block_512(const char *message, uint64_t bytes_len,
 /**
  * Add md5 padding to the block with length of the message in bits at the end
  */
-void padding_last_block_512(uint64_t bytes_len, block_512 block) {
+void padding_last_block_512(uint64_t bytes_len, block_512_t block) {
   memset(block, 0, 64);
   memcpy(block + 56, &bytes_len, sizeof(uint64_t));
 }
@@ -55,11 +55,11 @@ void padding_last_block_512(uint64_t bytes_len, block_512 block) {
 /*
 #include <stdio.h>
 
-static void print_block_512(block_512 block);
+static void print_block_512(block_512_t block);
 static void print_uint32t_to_binary_bytes(uint32_t n);
 static void print_byte_in_binary(uint8_t num);
 
-static void print_block_512(block_512 block) {
+static void print_block_512(block_512_t block) {
   for (int i = 0; i < 16; i++) {
     print_uint32t_to_binary_bytes(((uint32_t *)block)[i]);
     if (i % 2 == 1) {

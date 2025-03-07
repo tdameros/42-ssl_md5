@@ -115,14 +115,14 @@ static void print_files_hash(const flags_t *flags) {
 
 static char *hash_using_command(const char *command, const char *string) {
   if (0 == strcmp(command, "MD5")) {
-    md5_digest md5_digest;
-    md5_hex_digest md5_hex_digest;
+    md5_digest_t md5_digest;
+    md5_hex_digest_t md5_hex_digest;
     md5_hash(string, md5_digest);
     md5_convert_hex_digest(md5_digest, md5_hex_digest);
     return strdup(md5_hex_digest);
   } else if (0 == strcmp(command, "SHA256")) {
-    sha256_digest sha256_digest;
-    sha256_hex_digest sha256_hex_digest;
+    sha256_digest_t sha256_digest;
+    sha256_hex_digest_t sha256_hex_digest;
     sha256_hash(string, sha256_digest);
     sha256_convert_hex_digest(sha256_digest, sha256_hex_digest);
     return strdup(sha256_hex_digest);

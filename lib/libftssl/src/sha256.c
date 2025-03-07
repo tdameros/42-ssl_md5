@@ -26,7 +26,7 @@ typedef struct {
   uint32_t f;
   uint32_t g;
   uint32_t h;
-} sha256_context;
+} sha256_context_t;
 
 static const uint32_t K[64] = {
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
@@ -41,9 +41,9 @@ static const uint32_t K[64] = {
     0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
     0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2};
 
-static inline void init_context(sha256_context *context);
-static uint8_t *compute_block(block_512 block, sha256_digest digest,
-                              sha256_context *context);
+static inline void init_context(sha256_context_t *context);
+static uint8_t *compute_block(block_512_t block, sha256_digest_t digest,
+                              sha256_context_t *context);
 
 static inline uint32_t swap_endian_32(uint32_t x);
 static inline uint64_t swap_endian_64(uint64_t x);
@@ -57,9 +57,9 @@ static inline uint32_t Sigma1(uint32_t e);
 /**
  * Compute the SHA256 hash of a message and store it in the digest
  */
-void sha256_hash(const char *message, sha256_digest digest) {
-  sha256_context context;
-  block_512 block;
+void sha256_hash(const char *message, sha256_digest_t digest) {
+  sha256_context_t context;
+  block_512_t block;
   uint64_t size = strlen(message);
   uint64_t i = 0;
 
@@ -84,8 +84,8 @@ void sha256_hash(const char *message, sha256_digest digest) {
 /**
  * Convert a SHA256 digest to a hexadecimal string
  */
-void sha256_convert_hex_digest(sha256_digest digest,
-                               sha256_hex_digest hex_digest) {
+void sha256_convert_hex_digest(sha256_digest_t digest,
+                               sha256_hex_digest_t hex_digest) {
   for (int i = 0; i < SHA256_DIGEST_SIZE; i++) {
     snprintf(hex_digest + i * 2, 3, "%02x", digest[i]);
   }
@@ -95,7 +95,7 @@ void sha256_convert_hex_digest(sha256_digest digest,
 /**
  * Initialize the SHA256 context with the default values
  */
-static inline void init_context(sha256_context *context) {
+static inline void init_context(sha256_context_t *context) {
   context->a = 0x6a09e667;
   context->b = 0xbb67ae85;
   context->c = 0x3c6ef372;
@@ -109,8 +109,8 @@ static inline void init_context(sha256_context *context) {
 /**
  * Compute the SHA256 hash of a block using context and store it in the digest
  */
-static uint8_t *compute_block(block_512 block, sha256_digest digest,
-                              sha256_context *context) {
+static uint8_t *compute_block(block_512_t block, sha256_digest_t digest,
+                              sha256_context_t *context) {
   uint32_t A = context->a;
   uint32_t B = context->b;
   uint32_t C = context->c;
