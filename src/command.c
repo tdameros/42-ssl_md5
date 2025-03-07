@@ -42,20 +42,22 @@ static void print_stdint_hash(const flags_t *flags) {
       fprintf(stderr, "ft_ssl: %s: %s\n", flags->command, strerror(errno));
       return;
     }
+    char tmp = flags->stdin_input[strlen(flags->stdin_input) - 1];
+    if ('\n' == tmp) {
+      flags->stdin_input[strlen(flags->stdin_input) - 1] = '\0';
+    }
     if (flags->options.quiet) {
+      if (flags->options.print) {
+        printf("%s\n", flags->stdin_input);
+      }
       printf("%s\n", hash);
     } else if (flags->options.print) {
-
-      char tmp = flags->stdin_input[strlen(flags->stdin_input) - 1];
-      if ('\n' == tmp) {
-        flags->stdin_input[strlen(flags->stdin_input) - 1] = '\0';
-      }
       printf("(\"%s\")= %s\n", flags->stdin_input, hash);
-      if ('\n' == tmp) {
-        flags->stdin_input[strlen(flags->stdin_input)] = '\n';
-      }
     } else {
       printf("(stdin)= %s\n", hash);
+    }
+    if ('\n' == tmp) {
+      flags->stdin_input[strlen(flags->stdin_input)] = '\n';
     }
     free(hash);
   }
