@@ -1,5 +1,4 @@
 # Project
-ft_ssl
 libftssl.a
 tests_bin
 CMakeLists.txt

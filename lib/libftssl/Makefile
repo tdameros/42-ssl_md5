@@ -1,36 +1,46 @@
 #*******************************  VARIABLES  **********************************#
 
-NAME			=	ft_ssl
+NAME			=	libftssl.a
+SHORT_NAME		=	ftssl
+TEST_NAME		=	tests_bin
 
 # --------------- FILES --------------- #
 
 LIST_SRC		=	\
-					command.c	\
-					flags.c		\
+					md5.c		\
+					padding.c	\
+					sha256.c
+
+
+LIST_TEST_SRC	=	\
 					main.c		\
-					utils.c
+					md5.c		\
+					sha256.c
 
 # ------------ DIRECTORIES ------------ #
 
 DIR_BUILD		=	.build/
 DIR_SRC 		=	src/
 DIR_INCLUDE		=	include/
+DIR_TEST		=	test/
 DIR_LIB			=	lib/
-
-DIR_LIBFTSSL	=	$(DIR_LIB)libftssl/
-LIBFTSSL		=	$(DIR_LIBFTSSL)libftssl.a
 
 # ------------- SHORTCUTS ------------- #
 
 OBJ				=	$(patsubst %.c, $(DIR_BUILD)%.o, $(SRC))
 DEP				=	$(patsubst %.c, $(DIR_BUILD)%.d, $(SRC))
 SRC				=	$(addprefix $(DIR_SRC), $(LIST_SRC))
+TEST_SRC		=	$(addprefix $(DIR_TEST), $(LIST_TEST_SRC))
+TEST_DEP		=	$(patsubst %.c, $(DIR_BUILD)%.d, $(TEST_SRC))
+TEST_OBJ		=	$(patsubst %.c, $(DIR_BUILD)%.o, $(TEST_SRC))
 
 # ------------ COMPILATION ------------ #
 
 CFLAGS			=	-Wall -Wextra -Werror
 
 DEP_FLAGS		=	-MMD -MP
+
+ARFLAGS			=	rcs
 
 # -------------  COMMANDS ------------- #
 
@@ -43,20 +53,29 @@ MKDIR			=	mkdir -p
 .PHONY: all
 all:			$(NAME)
 
+.PHONY: tests
+tests: $(TEST_NAME)
+				valgrind ./$(TEST_NAME)
+
+$(TEST_NAME):	$(TEST_OBJ) $(NAME)
+				$(CC) $(CFLAGS) $(TEST_OBJ) -L. -l$(SHORT_NAME) -lcrypto -o $(TEST_NAME)
+
 # ---------- VARIABLES RULES ---------- #
 
-$(NAME):		$(LIBFTSSL) $(OBJ)
-				$(CC) $(CFLAGS) -o $(NAME) $(OBJ) -L $(DIR_LIBFTSSL) -lftssl
-
-$(LIBFTSSL): FORCE
-	$(MAKE) -C $(DIR_LIBFTSSL)
+$(NAME):		$(OBJ)
+				$(AR) $(ARFLAGS) $(NAME) $(OBJ)
 
 # ---------- COMPILED RULES ----------- #
 
 -include $(DEP)
 $(DIR_BUILD)%.o: %.c
 				mkdir -p $(shell dirname $@)
-				$(CC) $(CFLAGS) $(DEP_FLAGS) -c $< -o $@ -I $(DIR_INCLUDE) -I $(DIR_LIBFTSSL)include
+				$(CC) $(CFLAGS) $(DEP_FLAGS) -c $< -o $@ -I $(DIR_INCLUDE)
+
+-include $(TEST_DEP)
+$(DIR_BUILD)%.o: %.c
+				mkdir -p $(shell dirname $@)
+				$(CC) $(CFLAGS) $(DEP_FLAGS) -c $< -o $@ -I $(DIR_INCLUDE) -I $(DIR_LIB) -lcrypto
 
 .PHONY: clean
 clean:
@@ -65,6 +84,7 @@ clean:
 .PHONY: fclean
 fclean: clean
 				$(RM) $(NAME)
+				$(RM) $(TEST_NAME)
 
 .PHONY: re
 re:				fclean
@@ -72,11 +92,8 @@ re:				fclean
 
 .PHONY: check-format
 check-format:
-				clang-format -style=file $(SRC) -n --Werror
+				clang-format -style=file $(TEST_SRC) $(SRC) -n --Werror
 
 .PHONY: format
 format:
-				clang-format -style=file $(SRC) -i
-
-.PHONY: FORCE
-FORCE:
+				clang-format -style=file $(TEST_SRC) $(SRC) -i
