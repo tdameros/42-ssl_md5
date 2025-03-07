@@ -49,7 +49,7 @@ $(NAME):		$(LIBFTSSL) $(OBJ)
 				$(CC) $(CFLAGS) -o $(NAME) $(OBJ) -L $(DIR_LIBFTSSL) -lftssl
 
 $(LIBFTSSL): FORCE
-	$(MAKE) -C $(DIR_LIBFTSSL)
+				$(MAKE) -C $(DIR_LIBFTSSL)
 
 # ---------- COMPILED RULES ----------- #
 
@@ -60,10 +60,12 @@ $(DIR_BUILD)%.o: %.c
 
 .PHONY: clean
 clean:
+				$(MAKE) -C $(DIR_LIBFTSSL) clean
 				$(RM) $(DIR_BUILD)
 
 .PHONY: fclean
 fclean: clean
+				$(MAKE) -C $(DIR_LIBFTSSL) fclean
 				$(RM) $(NAME)
 
 .PHONY: re
@@ -80,3 +82,7 @@ format:
 
 .PHONY: FORCE
 FORCE:
+
+.PHONY: tests
+tests:
+				$(MAKE) -C $(DIR_LIBFTSSL) tests
