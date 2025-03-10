@@ -16,5 +16,6 @@
 #include "flags.h"
 
 void execute_command(const flags_t *flags);
+bool is_valid_command(const char *command);
 
 #endif

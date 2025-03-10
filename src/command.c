@@ -27,12 +27,35 @@
 static void print_stdint_hash(const flags_t *flags);
 static void print_string_hash(const flags_t *flags);
 static void print_files_hash(const flags_t *flags);
+
 static char *hash_using_command(const char *command, const char *string);
+static char *hash_md5_command(const char *string);
+static char *hash_sha256_command(const char *string);
+
+typedef struct {
+  const char *name;
+  char *(*hash_function)(const char *string);
+  const char *description;
+} command_t;
+
+static command_t commands[] = {
+    {"MD5", hash_md5_command, "Compute the MD5 hash"},
+    {"SHA256", hash_sha256_command, "Compute the SHA256 hash"},
+};
 
 void execute_command(const flags_t *flags) {
   print_stdint_hash(flags);
   print_string_hash(flags);
   print_files_hash(flags);
+}
+
+bool is_valid_command(const char *command) {
+  for (uint32_t i = 0; i < sizeof(commands) / sizeof(command_t); i++) {
+    if (0 == strcmp(command, commands[i].name)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 static void print_stdint_hash(const flags_t *flags) {
@@ -116,18 +139,26 @@ static void print_files_hash(const flags_t *flags) {
 }
 
 static char *hash_using_command(const char *command, const char *string) {
-  if (0 == strcmp(command, "MD5")) {
-    md5_digest_t md5_digest;
-    md5_hex_digest_t md5_hex_digest;
-    md5_hash(string, md5_digest);
-    md5_convert_hex_digest(md5_digest, md5_hex_digest);
-    return strdup(md5_hex_digest);
-  } else if (0 == strcmp(command, "SHA256")) {
-    sha256_digest_t sha256_digest;
-    sha256_hex_digest_t sha256_hex_digest;
-    sha256_hash(string, sha256_digest);
-    sha256_convert_hex_digest(sha256_digest, sha256_hex_digest);
-    return strdup(sha256_hex_digest);
+  for (uint32_t i = 0; i < sizeof(commands) / sizeof(command_t); i++) {
+    if (0 == strcmp(command, commands[i].name)) {
+      return commands[i].hash_function(string);
+    }
   }
   return NULL;
+}
+
+static char *hash_md5_command(const char *string) {
+  md5_digest_t md5_digest;
+  md5_hex_digest_t md5_hex_digest;
+  md5_hash(string, md5_digest);
+  md5_convert_hex_digest(md5_digest, md5_hex_digest);
+  return strdup(md5_hex_digest);
+}
+
+static char *hash_sha256_command(const char *string) {
+  sha256_digest_t sha256_digest;
+  sha256_hex_digest_t sha256_hex_digest;
+  sha256_hash(string, sha256_digest);
+  sha256_convert_hex_digest(sha256_digest, sha256_hex_digest);
+  return strdup(sha256_hex_digest);
 }

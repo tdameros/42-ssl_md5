@@ -17,12 +17,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "command.h"
 #include "flags.h"
 #include "utils.h"
 
 #define ERROR_MSG_TRY_HELP "Try 'ft_ping --help' for more information."
 
-static bool is_valid_command(const char *command);
 static void print_help(const char *program_name);
 
 int8_t parse_flags(int argc, char *argv[], flags_t *flags) {
@@ -85,10 +85,6 @@ int8_t parse_flags(int argc, char *argv[], flags_t *flags) {
     fprintf(stderr, ERROR_MSG_TRY_HELP "\n");
     return -1;
   }
-}
-
-static bool is_valid_command(const char *command) {
-  return strcmp(command, "MD5") == 0 || strcmp(command, "SHA256") == 0;
 }
 
 static void print_help(const char *program_name) {
