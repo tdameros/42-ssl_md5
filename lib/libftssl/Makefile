@@ -73,9 +73,9 @@ $(DIR_BUILD)%.o: %.c
 				$(CC) $(CFLAGS) $(DEP_FLAGS) -c $< -o $@ -I $(DIR_INCLUDE)
 
 -include $(TEST_DEP)
-$(DIR_BUILD)%.o: %.c
+$(DIR_BUILD)$(DIR_TEST)%.o: $(DIR_TEST)%.c
 				mkdir -p $(shell dirname $@)
-				$(CC) $(CFLAGS) $(DEP_FLAGS) -c $< -o $@ -I $(DIR_INCLUDE) -I $(DIR_LIB) -lcrypto
+				$(CC) $(CFLAGS) $(DEP_FLAGS) -c $< -o $@ -I $(DIR_INCLUDE) -I $(DIR_LIB)
 
 .PHONY: clean
 clean:
