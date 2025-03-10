@@ -61,8 +61,9 @@ The md5 algorithm consists of four rounds of 16 operations each. Each operation 
 - [MD5 explained in video](https://www.youtube.com/watch?v=5MiMK45gkTY)
 - [RFC 1321](doc/rfc1321_md5.pdf)
 
-![](doc/md5_registers.png)
-![](doc/md5_functions.svg)
+![](doc/md5_registers.jpg)
+
+![](doc/md5_functions.jpg)
 
 ### SHA256 (Secure Hash Algorithm)
 
@@ -70,6 +71,6 @@ The sha256 algorithm is similar to md5 but uses a different set of constants and
 
 - [RFC 6234](doc/rfc6234_sha.pdf)
 
-![](doc/sha256_registers.png)
-![](doc/sha256_functions.svg)
+![](doc/sha256_registers.jpg)
+![](doc/sha256_functions.jpg)
 
