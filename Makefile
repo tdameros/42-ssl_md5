@@ -27,6 +27,8 @@ DEP				=	$(patsubst %.c, $(DIR_BUILD)%.d, $(SRC))
 SRC				=	$(addprefix $(DIR_SRC), $(LIST_SRC))
 INCLUDE			=	$(shell find $(DIR_INCLUDE) -type f -name "*.h")
 
+CLANG_FORMAT 	= 	clang-format-15
+
 
 # ------------ COMPILATION ------------ #
 
@@ -76,11 +78,11 @@ re:				fclean
 
 .PHONY: check-format
 check-format:
-				clang-format -style=file $(SRC) $(INCLUDE) -n --Werror
+				$(CLANG_FORMAT) -style=file $(SRC) $(INCLUDE) -n --Werror
 
 .PHONY: format
 format:
-				clang-format -style=file $(SRC) $(INCLUDE) -i
+				$(CLANG_FORMAT) -style=file $(SRC) $(INCLUDE) -i
 
 .PHONY: FORCE
 FORCE:
