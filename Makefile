@@ -25,6 +25,8 @@ LIBFTSSL		=	$(DIR_LIBFTSSL)libftssl.a
 OBJ				=	$(patsubst %.c, $(DIR_BUILD)%.o, $(SRC))
 DEP				=	$(patsubst %.c, $(DIR_BUILD)%.d, $(SRC))
 SRC				=	$(addprefix $(DIR_SRC), $(LIST_SRC))
+INCLUDE			=	$(shell find $(DIR_INCLUDE) -type f -name "*.h")
+
 
 # ------------ COMPILATION ------------ #
 
@@ -74,11 +76,11 @@ re:				fclean
 
 .PHONY: check-format
 check-format:
-				clang-format -style=file $(SRC) -n --Werror
+				clang-format -style=file $(SRC) $(INCLUDE) -n --Werror
 
 .PHONY: format
 format:
-				clang-format -style=file $(SRC) -i
+				clang-format -style=file $(SRC) $(INCLUDE) -i
 
 .PHONY: FORCE
 FORCE:
