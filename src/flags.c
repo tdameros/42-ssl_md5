@@ -21,7 +21,7 @@
 #include "flags.h"
 #include "utils.h"
 
-#define ERROR_MSG_TRY_HELP "Try 'ft_ping --help' for more information."
+#define ERROR_MSG_TRY_HELP "Try 'ft_ssl --help' for more information."
 
 static void print_help(const char *program_name);
 
